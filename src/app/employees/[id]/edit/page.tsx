@@ -12,7 +12,7 @@ import { WelfareForm } from "@/components/employees/form/welfare-form"
 import { WorkForm } from "@/components/employees/form/work-form"
 import { AdditionalForm } from "@/components/employees/form/additional-form"
 import { OutsourcedPartnerForm } from "@/components/employees/form/outsourced-partner-form"
-import { useForm, FormProvider, FieldErrors } from "react-hook-form"
+import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form } from "@/components/ui/form"
@@ -196,13 +196,16 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   })
 
   // Function to clean data by converting "None" to empty string
-  const cleanData = (data: any) => {
+  const cleanData = (data: Employee): Employee => {
     const cleanedData = { ...data }
-    for (const key in cleanedData) {
-      if (cleanedData[key] === "None" || cleanedData[key] === null) {
-        cleanedData[key] = ""
+    Object.keys(cleanedData).forEach((key) => {
+      const value = cleanedData[key as keyof Employee]
+      if (value === "None" || value === null) {
+        if (typeof value === "string" || value === null) {
+          (cleanedData as Record<string, string | number>)[key] = ""
+        }
       }
-    }
+    })
     return cleanedData
   }
 
@@ -248,20 +251,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     }
   }
 
-  const handleSubmit = async (data: EmployeeFormValues) => {
-    try {
-      console.log("Sending update request to API...")
-      await api.updateEmployee(parseInt(id), data)
-      console.log("Update successful")
-      toast.success("Employee updated successfully")
-      router.push("/employees")
-    } catch (error) {
-      console.error("API update error:", error)
-      toast.error("Failed to update employee")
-      throw error
-    }
-  }
-
   const handleCancel = () => {
     router.push("/employees")
   }
@@ -300,35 +289,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     return "basic" // Default to basic tab if no specific errors found
   }
 
-  // Handle form submission with error navigation
-  const onSubmit = async (data: EmployeeFormValues) => {
-    console.log("Form submission started")
-    try {
-      setIsSubmitting(true)
-      console.log("Starting form submission...")
-      
-      const result = await form.trigger()
-      console.log("Form validation result:", result)
-      
-      if (!result) {
-        const errorTab = findFirstErrorTab()
-        console.log("Validation failed, switching to tab:", errorTab)
-        setActiveTab(errorTab)
-        toast.error("Please fix the errors in the form")
-        return
-      }
-
-      console.log("Form validation passed, submitting data...")
-      await handleSubmit(data)
-    } catch (error) {
-      console.error("Error during form submission:", error)
-      toast.error("An error occurred while updating the employee")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleUpdateClick = async (e: React.MouseEvent) => {
+  const handleUpdateClick = async (e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>) => {
     console.log("Update button clicked directly")
     e.preventDefault()
     
@@ -457,10 +418,10 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
           <FormProvider {...form}>
             <Form {...form}>
               <form 
-                onSubmit={(e) => {
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                   console.log("Form submit event triggered")
                   e.preventDefault()
-                  handleUpdateClick(e as any)
+                  handleUpdateClick(e)
                 }} 
                 className="space-y-8"
               >
