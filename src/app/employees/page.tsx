@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api, Employee } from "@/services/api"
 import { toast } from "sonner"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
   AlertDialog,
@@ -19,7 +18,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Plus } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
