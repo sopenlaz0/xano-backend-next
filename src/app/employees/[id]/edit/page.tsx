@@ -271,17 +271,31 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   // Function to find the first tab with errors
   const findFirstErrorTab = () => {
     const errors = form.formState.errors
+    const employmentCategory = form.watch("employment_category")
+    
+    // Common fields for both employee and partner
     const basicFields = ['name_kanji', 'name_furigana', 'name_english', 'gender', 'birth_date', 'joining_date', 'personal_email'] as const
-    const welfareFields = ['health_insurance_number', 'welfare_pension_number', 'employment_insurance_number'] as const
-    const workFields = ['work_location', 'position', 'team', 'employment_type'] as const
+    
+    // Employee-specific fields
+    const employeeWelfareFields = ['health_insurance_number', 'welfare_pension_number', 'employment_insurance_number'] as const
+    const employeeWorkFields = ['work_location', 'position', 'team', 'employment_type'] as const
+    
+    // Partner-specific fields
+    const partnerFields = ['outsourced_company', 'outsourced_position', 'outsourced_employment_type'] as const
+    
+    // Additional fields (common)
     const additionalFields = ['memo', 'health_check_date', 'health_check_result'] as const
-    const outsourcedFields = ['outsourced_company', 'outsourced_position', 'outsourced_employment_type'] as const
 
     if (basicFields.some(field => field in errors)) return "basic"
-    if (welfareFields.some(field => field in errors)) return "welfare"
-    if (workFields.some(field => field in errors)) return "work"
+    
+    if (employmentCategory === "employee") {
+      if (employeeWelfareFields.some(field => field in errors)) return "welfare"
+      if (employeeWorkFields.some(field => field in errors)) return "work"
+    } else if (employmentCategory === "partner") {
+      if (partnerFields.some(field => field in errors)) return "outsourced"
+    }
+    
     if (additionalFields.some(field => field in errors)) return "additional"
-    if (outsourcedFields.some(field => field in errors)) return "outsourced"
 
     return "basic" // Default to basic tab if no specific errors found
   }
@@ -471,12 +485,22 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                 </div>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-5">
+                  <TabsList className={`grid w-full ${
+                    employmentCategory === "employee" 
+                      ? "grid-cols-4" 
+                      : "grid-cols-3"
+                  } max-w-2xl mx-auto`}>
                     <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                    <TabsTrigger value="welfare">Welfare</TabsTrigger>
-                    <TabsTrigger value="work">Work</TabsTrigger>
+                    {employmentCategory === "employee" && (
+                      <>
+                        <TabsTrigger value="welfare">Welfare</TabsTrigger>
+                        <TabsTrigger value="work">Work</TabsTrigger>
+                      </>
+                    )}
                     <TabsTrigger value="additional">Additional</TabsTrigger>
-                    <TabsTrigger value="outsourced">Outsourced</TabsTrigger>
+                    {employmentCategory === "partner" && (
+                      <TabsTrigger value="outsourced">Outsourced</TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="basic" className="mt-6">
@@ -486,21 +510,27 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                     />
                   </TabsContent>
 
-                  <TabsContent value="welfare" className="mt-6">
-                    {employmentCategory === "employee" && <WelfareForm />}
-                  </TabsContent>
+                  {employmentCategory === "employee" && (
+                    <>
+                      <TabsContent value="welfare" className="mt-6">
+                        <WelfareForm />
+                      </TabsContent>
 
-                  <TabsContent value="work" className="mt-6">
-                    {employmentCategory === "employee" && <WorkForm />}
-                  </TabsContent>
+                      <TabsContent value="work" className="mt-6">
+                        <WorkForm />
+                      </TabsContent>
+                    </>
+                  )}
 
                   <TabsContent value="additional" className="mt-6">
                     <AdditionalForm onFileUpload={handleFileUpload} />
                   </TabsContent>
 
-                  <TabsContent value="outsourced" className="mt-6">
-                    {employmentCategory === "partner" && <OutsourcedPartnerForm />}
-                  </TabsContent>
+                  {employmentCategory === "partner" && (
+                    <TabsContent value="outsourced" className="mt-6">
+                      <OutsourcedPartnerForm />
+                    </TabsContent>
+                  )}
                 </Tabs>
 
                 <div className="flex justify-end space-x-2 mt-8">
