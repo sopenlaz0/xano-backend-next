@@ -28,6 +28,7 @@ import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form } from "@/components/ui/form"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const employeeFormSchema = z.object({
   employee_id: z.number(),
@@ -246,9 +247,49 @@ export default function EmployeeDetailsPage({ params }: EmployeeDetailsPageProps
   if (isLoading) {
     return (
       <div className="container mx-auto py-10">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Employee Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center mb-8">
+              <Skeleton className="h-32 w-32 rounded-full mb-4" />
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-32 mb-4" />
+              <div className="flex gap-2">
+                <Skeleton className="h-10 w-[100px]" />
+                <Skeleton className="h-10 w-[100px]" />
+              </div>
+            </div>
+
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4">
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+              </TabsList>
+
+              <TabsContent value="basic" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Basic Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="space-y-2">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-10 w-full" />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
     )
   }

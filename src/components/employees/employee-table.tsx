@@ -35,11 +35,13 @@ import { Input } from "@/components/ui/input"
 import { useState, useMemo, useCallback } from "react"
 import { Search, RotateCcw } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface EmployeeTableProps {
   employees: Employee[]
   onDelete: (employee: Employee) => void
   onUpdate: (employee: Employee) => void
+  isLoading?: boolean
 }
 
 const defaultColumns: VisibilityState = {
@@ -56,7 +58,7 @@ const defaultColumns: VisibilityState = {
   actions: true,
 }
 
-export function EmployeeTable({ employees, onDelete, onUpdate }: EmployeeTableProps) {
+export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false }: EmployeeTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumns)
   const [columnSearch, setColumnSearch] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -395,6 +397,38 @@ export function EmployeeTable({ employees, onDelete, onUpdate }: EmployeeTablePr
         column.id.toLowerCase().includes(columnSearch.toLowerCase())
       )
   }, [table, columnSearch])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full max-w-sm" />
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Team</TableHead>
+                <TableHead>Email</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">

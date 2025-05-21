@@ -18,6 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Plus } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
@@ -70,22 +72,18 @@ export default function EmployeesPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Employees</CardTitle>
-          <Link href="/employees/create">
-            <Button>Add Employee</Button>
-          </Link>
+          <Button onClick={() => router.push("/employees/new")}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Employee
+          </Button>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
-          ) : (
-            <EmployeeTable
-              employees={employees}
-              onDelete={handleDelete}
-              onUpdate={handleUpdate}
-            />
-          )}
+          <EmployeeTable
+            employees={employees}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            isLoading={isLoading}
+          />
         </CardContent>
       </Card>
 
