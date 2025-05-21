@@ -4,15 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Form } from "@/components/ui/form"
+import { Employee } from "@/services/api"
+import { useState } from "react"
+import { BasicForm } from "./form/basic-form"
+import { WelfareForm } from "./form/welfare-form"
+import { WorkForm } from "./form/work-form"
+import { AdditionalForm } from "./form/additional-form"
+import { OutsourcedPartnerForm } from "./form/outsourced-partner-form"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner"
 
 const employeeFormSchema = z.object({
   employee_id: z.number(),
@@ -91,6 +92,8 @@ const employeeFormSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>
 
+export type { EmployeeFormValues }
+
 interface EmployeeFormProps {
   initialData?: EmployeeFormValues
   onSubmit: (data: EmployeeFormValues) => void
@@ -98,6 +101,17 @@ interface EmployeeFormProps {
 }
 
 export function EmployeeForm({ initialData, onSubmit, onCancel }: EmployeeFormProps) {
+  const [profileImage, setProfileImage] = useState<string>(initialData?.profile_image || "")
+  const [familyMembers, setFamilyMembers] = useState<Array<{
+    nameFurigana: string
+    relationship: string
+    occupation: string
+    gender: string
+    birthDate: string
+    phoneNumber: string
+    error?: string
+  }>>([])
+
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeFormSchema),
     defaultValues: initialData || {
@@ -176,167 +190,74 @@ export function EmployeeForm({ initialData, onSubmit, onCancel }: EmployeeFormPr
     },
   })
 
+  const handleProfileImageUpload = async (file: File) => {
+    try {
+      // Here you would typically upload the file to your server/storage
+      // and get back a URL. For now, we'll just create a local URL
+      const imageUrl = URL.createObjectURL(file)
+      setProfileImage(imageUrl)
+      form.setValue("profile_image", imageUrl)
+    } catch (error) {
+      toast.error("Failed to upload profile image")
+      console.error(error)
+    }
+  }
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      // Here you would typically upload the file to your server/storage
+      // and get back a URL. For now, we'll just create a local URL
+      const fileUrl = URL.createObjectURL(file)
+      form.setValue("employment_contract", fileUrl)
+    } catch (error) {
+      toast.error("Failed to upload employment contract")
+      console.error(error)
+    }
+  }
+
+  const employmentCategory = form.watch("employment_category")
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="employee_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Employee ID</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name_kanji"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name (Kanji)</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name_furigana"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name (Furigana)</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name_english"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name (English)</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="birth_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Birth Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="joining_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Joining Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="team"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Team</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="position"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Position</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="employment_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Employment Type</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="personal_email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal Email</FormLabel>
-                <FormControl>
-                  <Input type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="personal_phone_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal Phone</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="flex justify-center mb-8">
+          <div className="relative">
+            <Avatar className="h-32 w-32">
+              <AvatarImage src={profileImage} alt="Profile" />
+              <AvatarFallback>Profile</AvatarFallback>
+            </Avatar>
+            <input
+              type="file"
+              accept="image/*"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  handleProfileImageUpload(file)
+                }
+              }}
+            />
+          </div>
         </div>
+
+        <BasicForm
+          familyMembers={familyMembers}
+          setFamilyMembers={setFamilyMembers}
+        />
+
+        {employmentCategory === "employee" && (
+          <>
+            <WelfareForm />
+            <WorkForm />
+          </>
+        )}
+
+        {employmentCategory === "partner" && (
+          <OutsourcedPartnerForm />
+        )}
+
+        <AdditionalForm onFileUpload={handleFileUpload} />
+
         <div className="flex justify-end space-x-2">
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel

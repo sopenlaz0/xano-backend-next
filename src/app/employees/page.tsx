@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { EmployeeTable } from "@/components/employees/employee-table"
-import { EmployeeForm } from "@/components/employees/employee-form"
+import { EmployeeForm, EmployeeFormValues } from "@/components/employees/employee-form"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -77,28 +77,22 @@ export default function EmployeesPage() {
     }
   }
 
-  const handleSubmit = async (data: Omit<Employee, "id" | "data_type" | "updated_at">) => {
+  const handleSubmit = async (data: EmployeeFormValues) => {
     try {
       if (selectedEmployee) {
-        // Update existing employee
-        const updatedEmployee = await api.updateEmployee(selectedEmployee.id, data)
-        setEmployees(
-          employees.map((e) =>
-            e.id === selectedEmployee.id ? updatedEmployee : e
-          )
-        )
-        toast.success("Employee updated successfully")
+        await api.updateEmployee(selectedEmployee.id, data)
       } else {
-        // Create new employee
-        const newEmployee = await api.createEmployee(data)
-        setEmployees([...employees, newEmployee])
-        toast.success("Employee created successfully")
+        await api.createEmployee(data)
       }
-      setIsDialogOpen(false)
+      toast.success("Employee saved successfully")
     } catch (error) {
-      toast.error(selectedEmployee ? "Failed to update employee" : "Failed to create employee")
+      toast.error("Failed to save employee")
       console.error(error)
     }
+  }
+
+  const handleCancel = () => {
+    setIsDialogOpen(false)
   }
 
   return (
@@ -133,7 +127,7 @@ export default function EmployeesPage() {
           <EmployeeForm
             initialData={selectedEmployee}
             onSubmit={handleSubmit}
-            onCancel={() => setIsDialogOpen(false)}
+            onCancel={handleCancel}
           />
         </DialogContent>
       </Dialog>
