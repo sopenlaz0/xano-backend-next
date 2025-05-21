@@ -25,12 +25,29 @@ interface FamilyMember {
 }
 
 interface BasicFormProps {
-  familyMembers: FamilyMember[]
-  setFamilyMembers: React.Dispatch<React.SetStateAction<FamilyMember[]>>
+  familyMembers: Array<{
+    nameFurigana: string
+    relationship: string
+    occupation: string
+    gender: string
+    birthDate: string
+    phoneNumber: string
+    error?: string
+  }>
+  setFamilyMembers: React.Dispatch<React.SetStateAction<Array<{
+    nameFurigana: string
+    relationship: string
+    occupation: string
+    gender: string
+    birthDate: string
+    phoneNumber: string
+    error?: string
+  }>>>
   disabled?: boolean
+  onEmploymentCategoryChange?: (category: "employee" | "partner") => void
 }
 
-export function BasicForm({ familyMembers, setFamilyMembers, disabled = false }: BasicFormProps) {
+export function BasicForm({ familyMembers, setFamilyMembers, disabled = false, onEmploymentCategoryChange }: BasicFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   const addFamilyMember = () => {
@@ -67,7 +84,14 @@ export function BasicForm({ familyMembers, setFamilyMembers, disabled = false }:
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Employment Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    onEmploymentCategoryChange?.(value as "employee" | "partner")
+                  }} 
+                  defaultValue="employee" 
+                  disabled={disabled}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
