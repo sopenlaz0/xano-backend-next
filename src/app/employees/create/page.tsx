@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { EmployeeForm, EmployeeFormValues } from "@/components/employees/employee-form"
+import { EmployeeForm } from "@/components/employees/employee-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/services/api"

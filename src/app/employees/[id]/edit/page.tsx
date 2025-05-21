@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { use } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/services/api"
@@ -96,13 +97,14 @@ const employeeFormSchema = z.object({
 type EmployeeFormValues = z.infer<typeof employeeFormSchema>
 
 interface EditEmployeePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   const router = useRouter()
+  const { id } = use(params)
   const [activeTab, setActiveTab] = useState("basic")
   const [profileImage, setProfileImage] = useState<string>("")
   const [familyMembers, setFamilyMembers] = useState<Array<{
@@ -195,11 +197,15 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
 
   useEffect(() => {
     loadEmployee()
-  }, [params.id])
+  }, [id])
 
   const loadEmployee = async () => {
     try {
-      const data = await api.getEmployee(params.id)
+      const employees = await api.getEmployees()
+      const data = employees.find(emp => emp.id === parseInt(id))
+      if (!data) {
+        throw new Error('Employee not found')
+      }
       form.reset(data)
       setProfileImage(data.profile_image || "")
     } catch (error) {
@@ -232,7 +238,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
 
   const handleSubmit = async (data: EmployeeFormValues) => {
     try {
-      await api.updateEmployee(params.id, data)
+      await api.updateEmployee(parseInt(id), data)
       toast.success("Employee updated successfully")
       router.push("/employees")
     } catch (error) {
