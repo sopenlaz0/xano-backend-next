@@ -13,12 +13,23 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api, Employee } from "@/services/api"
 import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | undefined>()
   const [isLoading, setIsLoading] = useState(true)
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null)
 
   useEffect(() => {
     loadEmployees()
@@ -47,16 +58,22 @@ export default function EmployeesPage() {
     setIsDialogOpen(true)
   }
 
-  const handleDelete = async (employee: Employee) => {
-    if (window.confirm("Are you sure you want to delete this employee?")) {
-      try {
-        await api.deleteEmployee(employee.id)
-        setEmployees(employees.filter((e) => e.id !== employee.id))
-        toast.success("Employee deleted successfully")
-      } catch (error) {
-        toast.error("Failed to delete employee")
-        console.error(error)
-      }
+  const handleDelete = (employee: Employee) => {
+    setEmployeeToDelete(employee)
+  }
+
+  const confirmDelete = async () => {
+    if (!employeeToDelete) return
+
+    try {
+      await api.deleteEmployee(employeeToDelete.id)
+      setEmployees(employees.filter((e) => e.id !== employeeToDelete.id))
+      toast.success("Employee deleted successfully")
+    } catch (error) {
+      toast.error("Failed to delete employee")
+      console.error(error)
+    } finally {
+      setEmployeeToDelete(null)
     }
   }
 
@@ -120,6 +137,24 @@ export default function EmployeesPage() {
           />
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!employeeToDelete} onOpenChange={() => setEmployeeToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the employee
+              {employeeToDelete && ` "${employeeToDelete.name_english}"`}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 } 
