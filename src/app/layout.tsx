@@ -4,6 +4,8 @@ import "./globals.css";
 import Link from "next/link";
 import { LanguageProvider } from "@/lib/language-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,26 +20,34 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <LanguageProvider>
-          <nav className="border-b">
-            <div className="container mx-auto px-4 py-4">
-              <div className="flex items-center justify-between">
-                <Link href="/" className="text-xl font-bold">
-                  EMS
-                </Link>
-                <div className="flex items-center space-x-4">
-                  <Link href="/employees" className="hover:text-gray-600">
-                    Employees
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <LanguageProvider>
+            <nav className="border-b">
+              <div className="container mx-auto px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <Link href="/" className="text-xl font-bold">
+                    EMS
                   </Link>
-                  <LanguageSwitcher />
+                  <div className="flex items-center space-x-4">
+                    <Link href="/employees" className="hover:text-gray-600">
+                      Employees
+                    </Link>
+                    <LanguageSwitcher />
+                    <ThemeToggle />
+                  </div>
                 </div>
               </div>
-            </div>
-          </nav>
-          {children}
-        </LanguageProvider>
+            </nav>
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
