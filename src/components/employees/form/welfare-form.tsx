@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee } from "@/services/api"
+import { EmployeeFormValues } from "@/components/employees/employee-form"
 
 export function WelfareForm() {
-  const form = useFormContext<Employee>()
+  const form = useFormContext<EmployeeFormValues>()
 
   return (
     <Card>

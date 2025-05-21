@@ -11,10 +11,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee } from "@/services/api"
+import { EmployeeFormValues } from "@/components/employees/employee-form"
 
 export function WorkForm() {
-  const form = useFormContext<Employee>()
+  const form = useFormContext<EmployeeFormValues>()
 
   return (
     <Card>

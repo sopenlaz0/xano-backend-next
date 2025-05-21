@@ -4,7 +4,7 @@ export default function EmployeesLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <main className="flex-1">
         {children}
       </main>

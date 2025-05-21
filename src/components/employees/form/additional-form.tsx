@@ -11,14 +11,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee } from "@/services/api"
+import { EmployeeFormValues } from "@/components/employees/employee-form"
 
 interface AdditionalFormProps {
   onFileUpload: (file: File) => void
 }
 
 export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
-  const form = useFormContext<Employee>()
+  const form = useFormContext<EmployeeFormValues>()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

@@ -9,12 +9,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee } from "@/services/api"
+import { EmployeeFormValues } from "@/components/employees/employee-form"
 
 export function OutsourcedPartnerForm() {
-  const form = useFormContext<Employee>()
+  const form = useFormContext<EmployeeFormValues>()
 
   return (
     <Card>
@@ -53,22 +52,27 @@ export function OutsourcedPartnerForm() {
 
           <FormField
             control={form.control}
-            name="outsourced_employment_type"
+            name="outsourced_joining_date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Outsourced Employment Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="full_time">Full Time</SelectItem>
-                    <SelectItem value="part_time">Part Time</SelectItem>
-                    <SelectItem value="contract">Contract</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormLabel>Outsourced Joining Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="outsourced_contract_end_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Outsourced Contract End Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
