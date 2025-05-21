@@ -27,7 +27,7 @@ export function OutsourcedPartnerForm() {
             name="outsourced_company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Outsourced Company</FormLabel>
+                <FormLabel>Company Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -41,7 +41,7 @@ export function OutsourcedPartnerForm() {
             name="outsourced_position"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Outsourced Position</FormLabel>
+                <FormLabel>Position</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -52,26 +52,12 @@ export function OutsourcedPartnerForm() {
 
           <FormField
             control={form.control}
-            name="outsourced_joining_date"
+            name="outsourced_employment_type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Outsourced Joining Date</FormLabel>
+                <FormLabel>Employment Type</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="outsourced_contract_end_date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Outsourced Contract End Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

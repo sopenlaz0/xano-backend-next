@@ -1,4 +1,4 @@
-export default {
+const translations = {
   // Login
   signIn: "サインイン",
   emailLabel: "メール",
@@ -9,6 +9,9 @@ export default {
   resetPassword: "パスワードを再設定する",
   rememberPassword: "パスワードを覚えていますか?",
   backToSignIn: "サインインに戻る",
+  welcome: "ようこそ",
+  nameRequired: "名前は必須です",
+  oldPasswordRequired: "古いパスワードが必要です",
   loginAs: "管理者/編集者/閲覧者としてログイン",
   dontShareInfo: "資格情報を他の人と共有しないでください。",
   willGetEmail:
@@ -63,7 +66,6 @@ export default {
   creatingUser: "ユーザーの作成",
   deletingAccount: "アカウントの削除",
   deletedAccountFailed: "アカウントの削除に失敗しました",
-  oldPasswordRequired: "古いパスワードが必要です",
   oldPasswordAtLeast8: "古いパスワードは 8 文字以上である必要があります",
   newPasswordRequired: "新しいパスワードが必要です",
   newPasswordAtLeast8: "新しいパスワードは 8 文字以上である必要があります",
@@ -457,3 +459,5 @@ export default {
   isObligate: "扶養義務",
   profile_image: "プロフィール画像",
 };
+
+export default translations;

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { EmployeeForm } from "@/components/employees/employee-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { api } from "@/services/api"
@@ -29,6 +28,8 @@ const employeeFormSchema = z.object({
   birth_date: z.string(),
   joining_date: z.string(),
   retirement_date: z.string(),
+  outsourced_joining_date: z.string(),
+  outsourced_contract_end_date: z.string(),
   blood_type: z.string(),
   home_address: z.string(),
   home_zip_code: z.string(),
@@ -122,6 +123,8 @@ export default function CreateEmployeePage() {
       birth_date: "",
       joining_date: "",
       retirement_date: "",
+      outsourced_joining_date: "",
+      outsourced_contract_end_date: "",
       blood_type: "",
       home_address: "",
       home_zip_code: "",

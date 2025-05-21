@@ -1,14 +1,15 @@
-export default {
+const translations = {
   // Login
   signIn: "Sign In",
   emailLabel: "Email",
   password: "Password",
   confirmPassword: "Confirm Password",
   login: "Login",
-  forgetPassword: "Forget password?",
-  resetPassword: "Reset password",
-  rememberPassword: "Remembered password?",
-  backToSignIn: "Back to sign in",
+  forgetPassword: "Forget Password?",
+  resetPassword: "Reset Password",
+  rememberPassword: "Remember Password",
+  backToSignIn: "Back to Sign In",
+  welcome: "Welcome",
   loginAs: "Login as Admin/Editor/Viewer",
   dontShareInfo: "Don't share your credential with any one!",
   willGetEmail:
@@ -455,3 +456,5 @@ export default {
   isObligate: "Obligate",
   profile_image: "Profile Image",
 };
+
+export default translations;

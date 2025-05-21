@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { use } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,6 +29,7 @@ const employeeFormSchema = z.object({
   birth_date: z.string(),
   joining_date: z.string(),
   retirement_date: z.string(),
+  outsourced_joining_date: z.string(),
   blood_type: z.string(),
   home_address: z.string(),
   home_zip_code: z.string(),
@@ -129,6 +130,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       birth_date: "",
       joining_date: "",
       retirement_date: "",
+      outsourced_joining_date: "",
       blood_type: "",
       home_address: "",
       home_zip_code: "",
@@ -195,11 +197,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     },
   })
 
-  useEffect(() => {
-    loadEmployee()
-  }, [id])
-
-  const loadEmployee = async () => {
+  const loadEmployee = useCallback(async () => {
     try {
       const employees = await api.getEmployees()
       const data = employees.find(emp => emp.id === parseInt(id))
@@ -213,7 +211,11 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       console.error(error)
       router.push("/employees")
     }
-  }
+  }, [id, form, router])
+
+  useEffect(() => {
+    loadEmployee()
+  }, [loadEmployee])
 
   const handleProfileImageUpload = async (file: File) => {
     try {

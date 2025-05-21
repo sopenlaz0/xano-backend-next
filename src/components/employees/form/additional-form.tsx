@@ -37,7 +37,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
           <FormField
             control={form.control}
             name="employment_contract"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Employment Contract</FormLabel>
                 <FormControl>

@@ -11,7 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Employee } from "@/services/api"
+import { EmployeeFormValues } from "@/components/employees/employee-form"
+import { Button } from "@/components/ui/button"
 
 interface FamilyMember {
   nameFurigana: string
@@ -25,11 +26,32 @@ interface FamilyMember {
 
 interface BasicFormProps {
   familyMembers: FamilyMember[]
-  setFamilyMembers: (members: FamilyMember[]) => void
+  setFamilyMembers: React.Dispatch<React.SetStateAction<FamilyMember[]>>
 }
 
 export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
-  const form = useFormContext<Employee>()
+  const form = useFormContext<EmployeeFormValues>()
+
+  const addFamilyMember = () => {
+    setFamilyMembers([...familyMembers, {
+      nameFurigana: "",
+      relationship: "",
+      occupation: "",
+      gender: "",
+      birthDate: "",
+      phoneNumber: ""
+    }])
+  }
+
+  const removeFamilyMember = (index: number) => {
+    setFamilyMembers(familyMembers.filter((_, i) => i !== index))
+  }
+
+  const updateFamilyMember = (index: number, field: keyof FamilyMember, value: string) => {
+    const updatedMembers = [...familyMembers]
+    updatedMembers[index] = { ...updatedMembers[index], [field]: value }
+    setFamilyMembers(updatedMembers)
+  }
 
   return (
     <Card>
@@ -292,6 +314,94 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               </FormItem>
             )}
           />
+
+          {/* Family Members Section */}
+          <div className="col-span-2">
+            <h3 className="text-lg font-medium mb-4">Family Members</h3>
+            {familyMembers.map((member, index) => (
+              <div key={index} className="grid grid-cols-2 gap-4 mb-4 p-4 border rounded">
+                <FormItem>
+                  <FormLabel>Name (Furigana)</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={member.nameFurigana}
+                      onChange={(e) => updateFamilyMember(index, "nameFurigana", e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Relationship</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={member.relationship}
+                      onChange={(e) => updateFamilyMember(index, "relationship", e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Occupation</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={member.occupation}
+                      onChange={(e) => updateFamilyMember(index, "occupation", e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <Select
+                    value={member.gender}
+                    onValueChange={(value) => updateFamilyMember(index, "gender", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Birth Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      value={member.birthDate}
+                      onChange={(e) => updateFamilyMember(index, "birthDate", e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={member.phoneNumber}
+                      onChange={(e) => updateFamilyMember(index, "phoneNumber", e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+                <div className="col-span-2 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => removeFamilyMember(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addFamilyMember}
+              className="mt-4"
+            >
+              Add Family Member
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
