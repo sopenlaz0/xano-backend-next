@@ -70,7 +70,6 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
   const [columnSearch, setColumnSearch] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const router = useRouter()
-  const [showFilters, setShowFilters] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 
