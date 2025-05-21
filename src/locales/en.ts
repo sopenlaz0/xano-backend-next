@@ -450,4 +450,8 @@ export default {
   //table
   hideRetirees: "Hide Retired Employees",
   hidePartners: "Hide Outsourced (Partners)",
+
+  no: "No",
+  isObligate: "Obligate",
+  profile_image: "Profile Image",
 };

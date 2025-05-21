@@ -453,4 +453,7 @@ export default {
   //table
   hideRetirees: "退職者を表示しない",
   hidePartners: "外注先（パートナーズ）を表示しない",
+  no: "いいえ",
+  isObligate: "扶養義務",
+  profile_image: "プロフィール画像",
 };
