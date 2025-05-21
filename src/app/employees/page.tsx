@@ -2,17 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { EmployeeTable } from "@/components/employees/employee-table"
-import { EmployeeForm, EmployeeFormValues } from "@/components/employees/employee-form"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api, Employee } from "@/services/api"
 import { toast } from "sonner"
+import Link from "next/link"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +20,6 @@ import {
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | undefined>()
   const [isLoading, setIsLoading] = useState(true)
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null)
 
@@ -46,16 +38,6 @@ export default function EmployeesPage() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleCreate = () => {
-    setSelectedEmployee(undefined)
-    setIsDialogOpen(true)
-  }
-
-  const handleEdit = (employee: Employee) => {
-    setSelectedEmployee(employee)
-    setIsDialogOpen(true)
   }
 
   const handleDelete = (employee: Employee) => {
@@ -77,30 +59,14 @@ export default function EmployeesPage() {
     }
   }
 
-  const handleSubmit = async (data: EmployeeFormValues) => {
-    try {
-      if (selectedEmployee) {
-        await api.updateEmployee(selectedEmployee.id, data)
-      } else {
-        await api.createEmployee(data)
-      }
-      toast.success("Employee saved successfully")
-    } catch (error) {
-      toast.error("Failed to save employee")
-      console.error(error)
-    }
-  }
-
-  const handleCancel = () => {
-    setIsDialogOpen(false)
-  }
-
   return (
     <div className="container mx-auto py-10">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Employees</CardTitle>
-          <Button onClick={handleCreate}>Add Employee</Button>
+          <Link href="/employees/create">
+            <Button>Add Employee</Button>
+          </Link>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -110,27 +76,11 @@ export default function EmployeesPage() {
           ) : (
             <EmployeeTable
               employees={employees}
-              onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedEmployee ? "Edit Employee" : "Add Employee"}
-            </DialogTitle>
-          </DialogHeader>
-          <EmployeeForm
-            initialData={selectedEmployee}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-          />
-        </DialogContent>
-      </Dialog>
 
       <AlertDialog open={!!employeeToDelete} onOpenChange={() => setEmployeeToDelete(null)}>
         <AlertDialogContent>
