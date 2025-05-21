@@ -1,5 +1,9 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
+if (!API_URL) {
+  console.error('NEXT_PUBLIC_API_URL is not set in environment variables')
+}
+
 export interface Employee {
   id: number
   employee_id: number
@@ -80,55 +84,102 @@ export interface Employee {
 
 export const api = {
   async getEmployees(): Promise<Employee[]> {
-    const response = await fetch(`${API_URL}/employees`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch employees')
+    try {
+      console.log('Fetching employees from:', `${API_URL}/employees`)
+      const response = await fetch(`${API_URL}/employees`)
+      if (!response.ok) {
+        console.error('Failed to fetch employees:', response.status, response.statusText)
+        throw new Error('Failed to fetch employees')
+      }
+      return response.json()
+    } catch (error) {
+      console.error('Error in getEmployees:', error)
+      throw error
     }
-    return response.json()
   },
 
   async createEmployee(data: Omit<Employee, "id" | "data_type" | "updated_at">): Promise<Employee> {
-    const response = await fetch(`${API_URL}/employees`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...data,
-        data_type: "Employee",
-        updated_at: Date.now()
-      }),
-    })
-    if (!response.ok) {
-      throw new Error('Failed to create employee')
+    try {
+      console.log('Creating employee:', data)
+      const response = await fetch(`${API_URL}/employees`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          data_type: "Employee",
+          updated_at: Date.now()
+        }),
+      })
+      if (!response.ok) {
+        console.error('Failed to create employee:', response.status, response.statusText)
+        throw new Error('Failed to create employee')
+      }
+      return response.json()
+    } catch (error) {
+      console.error('Error in createEmployee:', error)
+      throw error
     }
-    return response.json()
   },
 
   async updateEmployee(id: number, data: Omit<Employee, "id" | "data_type" | "updated_at">): Promise<Employee> {
-    const response = await fetch(`${API_URL}/employees/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    try {
+      if (!API_URL) {
+        throw new Error('API_URL is not defined')
+      }
+
+      console.log('Updating employee:', id, data)
+      const endpoint = `${API_URL}/employees/${id}`
+      console.log('API URL:', endpoint)
+      
+      const requestBody = {
         ...data,
         data_type: "Employee",
         updated_at: Date.now()
-      }),
-    })
-    if (!response.ok) {
-      throw new Error('Failed to update employee')
+      }
+      console.log('Request body:', requestBody)
+
+      const response = await fetch(endpoint, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Failed to update employee:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText
+        })
+        throw new Error(`Failed to update employee: ${response.status} ${response.statusText}`)
+      }
+      
+      const result = await response.json()
+      console.log('Update successful:', result)
+      return result
+    } catch (error) {
+      console.error('Error in updateEmployee:', error)
+      throw error
     }
-    return response.json()
   },
 
   async deleteEmployee(id: number): Promise<void> {
-    const response = await fetch(`${API_URL}/employees/${id}`, {
-      method: 'DELETE',
-    })
-    if (!response.ok) {
-      throw new Error('Failed to delete employee')
+    try {
+      console.log('Deleting employee:', id)
+      const response = await fetch(`${API_URL}/employees/${id}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        console.error('Failed to delete employee:', response.status, response.statusText)
+        throw new Error('Failed to delete employee')
+      }
+    } catch (error) {
+      console.error('Error in deleteEmployee:', error)
+      throw error
     }
   }
 } 

@@ -39,6 +39,7 @@ import { Search, RotateCcw } from "lucide-react"
 interface EmployeeTableProps {
   employees: Employee[]
   onDelete: (employee: Employee) => void
+  onUpdate: (employee: Employee) => void
 }
 
 const defaultColumns: VisibilityState = {
@@ -55,7 +56,7 @@ const defaultColumns: VisibilityState = {
   actions: true,
 }
 
-export function EmployeeTable({ employees, onDelete }: EmployeeTableProps) {
+export function EmployeeTable({ employees, onDelete, onUpdate }: EmployeeTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumns)
   const [columnSearch, setColumnSearch] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -352,11 +353,13 @@ export function EmployeeTable({ employees, onDelete }: EmployeeTableProps) {
         const employee = row.original
         return (
           <div className="flex space-x-2">
-            <Link href={`/employees/${employee.id}/edit`}>
-              <Button variant="outline" size="sm">
-                Edit
-              </Button>
-            </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onUpdate(employee)}
+            >
+              Edit
+            </Button>
             <Button
               variant="destructive"
               size="sm"

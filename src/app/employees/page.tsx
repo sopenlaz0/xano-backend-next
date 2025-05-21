@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { api, Employee } from "@/services/api"
 import { toast } from "sonner"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,7 @@ export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     loadEmployees()
@@ -42,6 +44,10 @@ export default function EmployeesPage() {
 
   const handleDelete = (employee: Employee) => {
     setEmployeeToDelete(employee)
+  }
+
+  const handleUpdate = (employee: Employee) => {
+    router.push(`/employees/${employee.id}/edit`)
   }
 
   const confirmDelete = async () => {
@@ -77,6 +83,7 @@ export default function EmployeesPage() {
             <EmployeeTable
               employees={employees}
               onDelete={handleDelete}
+              onUpdate={handleUpdate}
             />
           )}
         </CardContent>

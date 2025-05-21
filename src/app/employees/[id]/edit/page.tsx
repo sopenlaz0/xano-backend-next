@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
-import { use } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { api } from "@/services/api"
+import { api, Employee } from "@/services/api"
 import { toast } from "sonner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BasicForm } from "@/components/employees/form/basic-form"
@@ -13,7 +12,7 @@ import { WelfareForm } from "@/components/employees/form/welfare-form"
 import { WorkForm } from "@/components/employees/form/work-form"
 import { AdditionalForm } from "@/components/employees/form/additional-form"
 import { OutsourcedPartnerForm } from "@/components/employees/form/outsourced-partner-form"
-import { useForm, FormProvider } from "react-hook-form"
+import { useForm, FormProvider, FieldErrors } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form } from "@/components/ui/form"
@@ -29,7 +28,6 @@ const employeeFormSchema = z.object({
   birth_date: z.string(),
   joining_date: z.string(),
   retirement_date: z.string(),
-  outsourced_joining_date: z.string(),
   blood_type: z.string(),
   home_address: z.string(),
   home_zip_code: z.string(),
@@ -108,6 +106,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   const { id } = use(params)
   const [activeTab, setActiveTab] = useState("basic")
   const [profileImage, setProfileImage] = useState<string>("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [familyMembers, setFamilyMembers] = useState<Array<{
     nameFurigana: string
     relationship: string
@@ -130,7 +129,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       birth_date: "",
       joining_date: "",
       retirement_date: "",
-      outsourced_joining_date: "",
       blood_type: "",
       home_address: "",
       home_zip_code: "",
@@ -197,25 +195,37 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     },
   })
 
-  const loadEmployee = useCallback(async () => {
-    try {
-      const employees = await api.getEmployees()
-      const data = employees.find(emp => emp.id === parseInt(id))
-      if (!data) {
-        throw new Error('Employee not found')
+  // Function to clean data by converting "None" to empty string
+  const cleanData = (data: any) => {
+    const cleanedData = { ...data }
+    for (const key in cleanedData) {
+      if (cleanedData[key] === "None" || cleanedData[key] === null) {
+        cleanedData[key] = ""
       }
-      form.reset(data)
-      setProfileImage(data.profile_image || "")
-    } catch (error) {
-      toast.error("Failed to load employee")
-      console.error(error)
-      router.push("/employees")
     }
-  }, [id, form, router])
+    return cleanedData
+  }
 
   useEffect(() => {
+    const loadEmployee = async () => {
+      try {
+        const employees = await api.getEmployees()
+        const data = employees.find(emp => emp.id === parseInt(id))
+        if (!data) {
+          throw new Error('Employee not found')
+        }
+        const cleanedData = cleanData(data)
+        form.reset(cleanedData)
+        setProfileImage(cleanedData.profile_image || "")
+      } catch (error) {
+        toast.error("Failed to load employee")
+        console.error(error)
+        router.push("/employees")
+      }
+    }
+
     loadEmployee()
-  }, [loadEmployee])
+  }, [id, form, router])
 
   const handleProfileImageUpload = async (file: File) => {
     try {
@@ -240,12 +250,15 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
 
   const handleSubmit = async (data: EmployeeFormValues) => {
     try {
+      console.log("Sending update request to API...")
       await api.updateEmployee(parseInt(id), data)
+      console.log("Update successful")
       toast.success("Employee updated successfully")
       router.push("/employees")
     } catch (error) {
+      console.error("API update error:", error)
       toast.error("Failed to update employee")
-      console.error(error)
+      throw error
     }
   }
 
@@ -254,6 +267,171 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   }
 
   const employmentCategory = form.watch("employment_category")
+
+  // Function to find the first tab with errors
+  const findFirstErrorTab = () => {
+    const errors = form.formState.errors
+    const basicFields = ['name_kanji', 'name_furigana', 'name_english', 'gender', 'birth_date', 'joining_date', 'personal_email'] as const
+    const welfareFields = ['health_insurance_number', 'welfare_pension_number', 'employment_insurance_number'] as const
+    const workFields = ['work_location', 'position', 'team', 'employment_type'] as const
+    const additionalFields = ['memo', 'health_check_date', 'health_check_result'] as const
+    const outsourcedFields = ['outsourced_company', 'outsourced_position', 'outsourced_employment_type'] as const
+
+    if (basicFields.some(field => field in errors)) return "basic"
+    if (welfareFields.some(field => field in errors)) return "welfare"
+    if (workFields.some(field => field in errors)) return "work"
+    if (additionalFields.some(field => field in errors)) return "additional"
+    if (outsourcedFields.some(field => field in errors)) return "outsourced"
+
+    return "basic" // Default to basic tab if no specific errors found
+  }
+
+  // Handle form submission with error navigation
+  const onSubmit = async (data: EmployeeFormValues) => {
+    console.log("Form submission started")
+    try {
+      setIsSubmitting(true)
+      console.log("Starting form submission...")
+      
+      const result = await form.trigger()
+      console.log("Form validation result:", result)
+      
+      if (!result) {
+        const errorTab = findFirstErrorTab()
+        console.log("Validation failed, switching to tab:", errorTab)
+        setActiveTab(errorTab)
+        toast.error("Please fix the errors in the form")
+        return
+      }
+
+      console.log("Form validation passed, submitting data...")
+      await handleSubmit(data)
+    } catch (error) {
+      console.error("Error during form submission:", error)
+      toast.error("An error occurred while updating the employee")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleUpdateClick = async (e: React.MouseEvent) => {
+    console.log("Update button clicked directly")
+    e.preventDefault()
+    
+    try {
+      console.log("Starting form submission process...")
+      const formData = form.getValues()
+      console.log("Current form data:", formData)
+      
+      const result = await form.trigger()
+      console.log("Form validation result:", result)
+      
+      if (!result) {
+        const errors = form.formState.errors
+        console.log("Validation errors:", errors)
+        const errorTab = findFirstErrorTab()
+        console.log("Validation failed, switching to tab:", errorTab)
+        setActiveTab(errorTab)
+        toast.error("Please fix the errors in the form")
+        return
+      }
+
+      console.log("Form validation passed, proceeding with update...")
+      setIsSubmitting(true)
+      
+      try {
+        // Convert all undefined values to empty strings and ensure required fields are present
+        const cleanedData: Omit<Employee, "id" | "data_type" | "updated_at"> = {
+          employee_id: formData.employee_id,
+          name_kanji: formData.name_kanji,
+          name_furigana: formData.name_furigana,
+          name_english: formData.name_english,
+          name_alias: formData.name_alias || "",
+          gender: formData.gender || "",
+          birth_date: formData.birth_date || "",
+          joining_date: formData.joining_date || "",
+          retirement_date: formData.retirement_date || "",
+          blood_type: formData.blood_type || "",
+          home_address: formData.home_address || "",
+          home_zip_code: formData.home_zip_code || "",
+          home_phone_number: formData.home_phone_number || "",
+          personal_phone_number: formData.personal_phone_number || "",
+          personal_email: formData.personal_email || "",
+          personal_line_id: formData.personal_line_id || "",
+          driving_license_number: formData.driving_license_number || "",
+          qualifications: formData.qualifications || "",
+          last_education: formData.last_education || "",
+          family_info: formData.family_info || "",
+          emergency_contact_info: formData.emergency_contact_info || "",
+          company_a: formData.company_a || "",
+          company_b: formData.company_b || "",
+          graduate_or_midcareer: formData.graduate_or_midcareer || "",
+          midcareer_details: formData.midcareer_details || "",
+          transferred_company: formData.transferred_company || "",
+          work_location: formData.work_location || "",
+          company_phone_number: formData.company_phone_number || "",
+          company_email: formData.company_email || "",
+          work_accident_procedure_memo: formData.work_accident_procedure_memo || "",
+          position: formData.position || "",
+          team: formData.team || "",
+          responsible_person_code: formData.responsible_person_code || "",
+          employment_type: formData.employment_type || "",
+          employment_contract: formData.employment_contract || "",
+          employment_category: formData.employment_category || "",
+          outsourced_company: formData.outsourced_company || "",
+          outsourced_position: formData.outsourced_position || "",
+          outsourced_employment_type: formData.outsourced_employment_type || "",
+          job_type: formData.job_type || "",
+          personal_number: formData.personal_number || "",
+          basic_pension_number: formData.basic_pension_number || "",
+          health_insurance_number: formData.health_insurance_number || "",
+          health_insurance_date: formData.health_insurance_date || "",
+          health_insurance_grade: formData.health_insurance_grade || "",
+          welfare_pension_number: formData.welfare_pension_number || "",
+          welfare_pension_date: formData.welfare_pension_date || "",
+          welfare_pension_grade: formData.welfare_pension_grade || "",
+          employment_insurance_number: formData.employment_insurance_number || "",
+          employment_insurance_date: formData.employment_insurance_date || "",
+          salary_transfer_details: formData.salary_transfer_details || "",
+          bonus_transfer_details: formData.bonus_transfer_details || "",
+          monthly_work_hours: formData.monthly_work_hours || 0,
+          employment_compensation_history: formData.employment_compensation_history || "",
+          monthly_paid_vacation_days: formData.monthly_paid_vacation_days || "",
+          remaining_paid_vacation_days: formData.remaining_paid_vacation_days || 0,
+          monthly_absence_days: formData.monthly_absence_days || 0,
+          late_and_early_leaves: formData.late_and_early_leaves || "",
+          special_paid_vacation_days: formData.special_paid_vacation_days || "",
+          commuting_expenses: formData.commuting_expenses || "",
+          commuting_method: formData.commuting_method || "",
+          car_commuting_details: formData.car_commuting_details || "",
+          public_transport_details: formData.public_transport_details || "",
+          commuting_time: formData.commuting_time || "",
+          memo: formData.memo || "",
+          maternity_leave_period: formData.maternity_leave_period || "",
+          parental_leave_period: formData.parental_leave_period || "",
+          health_check_date: formData.health_check_date || "",
+          health_check_result: formData.health_check_result || "",
+          isObligate: formData.isObligate || "",
+          profile_image: formData.profile_image || "",
+          account: formData.account || 0,
+        }
+        
+        console.log("Calling updateEmployee API with cleaned data:", cleanedData)
+        await api.updateEmployee(parseInt(id), cleanedData)
+        console.log("Update successful")
+        toast.success("Employee updated successfully")
+        router.push("/employees")
+      } catch (error) {
+        console.error("API update error:", error)
+        toast.error("Failed to update employee")
+      }
+    } catch (error) {
+      console.error("Form submission error:", error)
+      toast.error("An error occurred while submitting the form")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -264,7 +442,14 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
         <CardContent>
           <FormProvider {...form}>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+              <form 
+                onSubmit={(e) => {
+                  console.log("Form submit event triggered")
+                  e.preventDefault()
+                  handleUpdateClick(e as any)
+                }} 
+                className="space-y-8"
+              >
                 <div className="flex justify-center mb-8">
                   <div className="relative">
                     <Avatar className="h-32 w-32">
@@ -319,10 +504,28 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                 </Tabs>
 
                 <div className="flex justify-end space-x-2 mt-8">
-                  <Button type="button" variant="outline" onClick={handleCancel}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleCancel}
+                    disabled={isSubmitting}
+                  >
                     Cancel
                   </Button>
-                  <Button type="submit">Update</Button>
+                  <Button 
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={handleUpdateClick}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Updating...
+                      </>
+                    ) : (
+                      "Update"
+                    )}
+                  </Button>
                 </div>
               </form>
             </Form>
