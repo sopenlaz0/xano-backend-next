@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/lib/language-context";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,6 +49,7 @@ export default function RootLayout({
             {children}
           </LanguageProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

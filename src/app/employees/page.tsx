@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { EmployeeTable } from "@/components/employees/employee-table"
 import { EmployeeForm } from "@/components/employees/employee-form"
 import { Button } from "@/components/ui/button"
@@ -11,23 +11,31 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface Employee {
-  id: string
-  name_kanji: string
-  name_furigana: string
-  name_english: string
-  email: string
-  phone: string
-  department: string
-  position: string
-  hire_date: string
-}
+import { api, Employee } from "@/services/api"
+import { toast } from "sonner"
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | undefined>()
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    loadEmployees()
+  }, [])
+
+  const loadEmployees = async () => {
+    try {
+      setIsLoading(true)
+      const data = await api.getEmployees()
+      setEmployees(data)
+    } catch (error) {
+      toast.error("Failed to load employees")
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleCreate = () => {
     setSelectedEmployee(undefined)
@@ -41,26 +49,39 @@ export default function EmployeesPage() {
 
   const handleDelete = async (employee: Employee) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
-      // TODO: Implement delete functionality with Xano API
-      setEmployees(employees.filter((e) => e.id !== employee.id))
+      try {
+        await api.deleteEmployee(employee.id)
+        setEmployees(employees.filter((e) => e.id !== employee.id))
+        toast.success("Employee deleted successfully")
+      } catch (error) {
+        toast.error("Failed to delete employee")
+        console.error(error)
+      }
     }
   }
 
-  const handleSubmit = async (data: Omit<Employee, "id">) => {
-    // TODO: Implement create/update functionality with Xano API
-    if (selectedEmployee) {
-      // Update existing employee
-      setEmployees(
-        employees.map((e) =>
-          e.id === selectedEmployee.id ? { ...data, id: e.id } : e
+  const handleSubmit = async (data: Omit<Employee, "id" | "data_type" | "updated_at">) => {
+    try {
+      if (selectedEmployee) {
+        // Update existing employee
+        const updatedEmployee = await api.updateEmployee(selectedEmployee.id, data)
+        setEmployees(
+          employees.map((e) =>
+            e.id === selectedEmployee.id ? updatedEmployee : e
+          )
         )
-      )
-    } else {
-      // Create new employee
-      const newEmployee = { ...data, id: Date.now().toString() }
-      setEmployees([...employees, newEmployee])
+        toast.success("Employee updated successfully")
+      } else {
+        // Create new employee
+        const newEmployee = await api.createEmployee(data)
+        setEmployees([...employees, newEmployee])
+        toast.success("Employee created successfully")
+      }
+      setIsDialogOpen(false)
+    } catch (error) {
+      toast.error(selectedEmployee ? "Failed to update employee" : "Failed to create employee")
+      console.error(error)
     }
-    setIsDialogOpen(false)
   }
 
   return (
@@ -71,16 +92,22 @@ export default function EmployeesPage() {
           <Button onClick={handleCreate}>Add Employee</Button>
         </CardHeader>
         <CardContent>
-          <EmployeeTable
-            employees={employees}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+          ) : (
+            <EmployeeTable
+              employees={employees}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
         </CardContent>
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {selectedEmployee ? "Edit Employee" : "Add Employee"}
