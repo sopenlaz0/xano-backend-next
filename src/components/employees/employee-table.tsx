@@ -32,10 +32,17 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { Search, RotateCcw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface EmployeeTableProps {
   employees: Employee[]
@@ -63,6 +70,9 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
   const [columnSearch, setColumnSearch] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const router = useRouter()
+  const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
 
   const resetColumns = useCallback(() => {
     setColumnVisibility(defaultColumns)
@@ -355,18 +365,26 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
       cell: ({ row }: { row: Row<Employee> }) => {
         const employee = row.original
         return (
-          <div className="flex space-x-2">
+          <div className="flex space-x-1 sm:space-x-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onUpdate(employee)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onUpdate(employee)
+              }}
+              className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm"
             >
               Edit
             </Button>
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onDelete(employee)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onDelete(employee)
+              }}
+              className="h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm"
             >
               Delete
             </Button>
@@ -398,29 +416,52 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
       )
   }, [table, columnSearch])
 
+  // Add effect to handle search filtering
+  useEffect(() => {
+    const column = table.getColumn("name_english")
+    if (column) {
+      column.setFilterValue(searchQuery)
+    }
+  }, [searchQuery, table])
+
+  // Add effect to handle status filtering
+  useEffect(() => {
+    const column = table.getColumn("isObligate")
+    if (column) {
+      if (statusFilter === "all") {
+        column.setFilterValue("")
+      } else {
+        column.setFilterValue(statusFilter === "active")
+      }
+    }
+  }, [statusFilter, table])
+
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-10 w-full max-w-sm" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <Skeleton className="h-9 w-full sm:w-[200px]" />
+          <Skeleton className="h-9 w-full sm:w-[180px]" />
+        </div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Team</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead className="text-xs sm:text-sm">ID</TableHead>
+                <TableHead className="text-xs sm:text-sm">Name</TableHead>
+                <TableHead className="text-xs sm:text-sm">Position</TableHead>
+                <TableHead className="text-xs sm:text-sm">Team</TableHead>
+                <TableHead className="text-xs sm:text-sm">Email</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={index}>
-                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                  <TableCell className="py-2 sm:py-4"><Skeleton className="h-3 sm:h-4 w-12" /></TableCell>
+                  <TableCell className="py-2 sm:py-4"><Skeleton className="h-3 sm:h-4 w-24 sm:w-32" /></TableCell>
+                  <TableCell className="py-2 sm:py-4"><Skeleton className="h-3 sm:h-4 w-20 sm:w-24" /></TableCell>
+                  <TableCell className="py-2 sm:py-4"><Skeleton className="h-3 sm:h-4 w-20 sm:w-24" /></TableCell>
+                  <TableCell className="py-2 sm:py-4"><Skeleton className="h-3 sm:h-4 w-32 sm:w-40" /></TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -432,45 +473,42 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
           <Input
-            placeholder="Filter by name..."
-            value={(table.getColumn("name_english")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name_english")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
+            placeholder="Search employees..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:w-[200px]"
           />
-          <Input
-            placeholder="Filter by position..."
-            value={(table.getColumn("position")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("position")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <Input
-            placeholder="Filter by team..."
-            value={(table.getColumn("team")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("team")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
-            onClick={resetColumns}
+            onClick={() => {
+              setSearchQuery("")
+              setStatusFilter("all")
+              resetColumns()
+            }}
+            className="w-full sm:w-auto"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
-            Reset Columns
+            Reset All
           </Button>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
                 Columns
               </Button>
             </DropdownMenuTrigger>
@@ -516,7 +554,7 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header: Header<Employee, unknown>) => {
                   return (
-                    <TableHead key={header.id} className="whitespace-nowrap">
+                    <TableHead key={header.id} className="whitespace-nowrap text-xs sm:text-sm font-medium">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -539,7 +577,7 @@ export function EmployeeTable({ employees, onDelete, onUpdate, isLoading = false
                   onClick={() => router.push(`/employees/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell: Cell<Employee, unknown>) => (
-                    <TableCell key={cell.id} className="whitespace-nowrap">
+                    <TableCell key={cell.id} className="whitespace-nowrap text-xs sm:text-sm py-2 sm:py-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

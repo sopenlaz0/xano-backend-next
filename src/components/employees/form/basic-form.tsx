@@ -77,7 +77,7 @@ export function BasicForm({ familyMembers, setFamilyMembers, disabled = false, o
         <CardTitle>Basic Information</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="employment_category"
@@ -339,102 +339,103 @@ export function BasicForm({ familyMembers, setFamilyMembers, disabled = false, o
               </FormItem>
             )}
           />
+        </div>
 
-          {/* Family Members Section */}
-          <div className="col-span-2">
-            <h3 className="text-lg font-medium mb-4">Family Members</h3>
-            {familyMembers.map((member, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4 mb-4 p-4 border rounded">
-                <FormItem>
-                  <FormLabel>Name (Furigana)</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={member.nameFurigana}
-                      onChange={(e) => updateFamilyMember(index, "nameFurigana", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Relationship</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={member.relationship}
-                      onChange={(e) => updateFamilyMember(index, "relationship", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Occupation</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={member.occupation}
-                      onChange={(e) => updateFamilyMember(index, "occupation", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <Select
-                    value={member.gender}
-                    onValueChange={(value) => updateFamilyMember(index, "gender", value)}
+        {/* Family Members Section */}
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-4">Family Members</h3>
+          {familyMembers.map((member, index) => (
+            <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 p-4 border rounded">
+              <FormItem>
+                <FormLabel>Name (Furigana)</FormLabel>
+                <FormControl>
+                  <Input
+                    value={member.nameFurigana}
+                    onChange={(e) => updateFamilyMember(index, "nameFurigana", e.target.value)}
                     disabled={disabled}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Birth Date</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      value={member.birthDate}
-                      onChange={(e) => updateFamilyMember(index, "birthDate", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={member.phoneNumber}
-                      onChange={(e) => updateFamilyMember(index, "phoneNumber", e.target.value)}
-                      disabled={disabled}
-                    />
-                  </FormControl>
-                </FormItem>
-                <div className="col-span-2 flex justify-end">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => removeFamilyMember(index)}
+                  />
+                </FormControl>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Relationship</FormLabel>
+                <FormControl>
+                  <Input
+                    value={member.relationship}
+                    onChange={(e) => updateFamilyMember(index, "relationship", e.target.value)}
                     disabled={disabled}
-                  >
-                    Remove
-                  </Button>
-                </div>
+                  />
+                </FormControl>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Occupation</FormLabel>
+                <FormControl>
+                  <Input
+                    value={member.occupation}
+                    onChange={(e) => updateFamilyMember(index, "occupation", e.target.value)}
+                    disabled={disabled}
+                  />
+                </FormControl>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <Select
+                  value={member.gender}
+                  onValueChange={(value) => updateFamilyMember(index, "gender", value)}
+                  disabled={disabled}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Birth Date</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    value={member.birthDate}
+                    onChange={(e) => updateFamilyMember(index, "birthDate", e.target.value)}
+                    disabled={disabled}
+                  />
+                </FormControl>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input
+                    value={member.phoneNumber}
+                    onChange={(e) => updateFamilyMember(index, "phoneNumber", e.target.value)}
+                    disabled={disabled}
+                  />
+                </FormControl>
+              </FormItem>
+              <div className="col-span-1 sm:col-span-2 flex justify-end">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => removeFamilyMember(index)}
+                  disabled={disabled}
+                  className="w-full sm:w-auto"
+                >
+                  Remove
+                </Button>
               </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={addFamilyMember}
-              className="mt-4"
-              disabled={disabled}
-            >
-              Add Family Member
-            </Button>
-          </div>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addFamilyMember}
+            className="mt-4 w-full sm:w-auto"
+            disabled={disabled}
+          >
+            Add Family Member
+          </Button>
         </div>
       </CardContent>
     </Card>
