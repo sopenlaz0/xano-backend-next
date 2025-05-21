@@ -27,9 +27,10 @@ interface FamilyMember {
 interface BasicFormProps {
   familyMembers: FamilyMember[]
   setFamilyMembers: React.Dispatch<React.SetStateAction<FamilyMember[]>>
+  disabled?: boolean
 }
 
-export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
+export function BasicForm({ familyMembers, setFamilyMembers, disabled = false }: BasicFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   const addFamilyMember = () => {
@@ -66,7 +67,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Employment Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -89,7 +90,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Employee ID</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input type="number" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -103,7 +104,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Name (Kanji)</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,7 +118,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Name (Furigana)</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,7 +132,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Name (English)</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -145,7 +146,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Name (Alias)</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -158,7 +159,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -182,7 +183,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Birth Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -196,7 +197,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Home Address</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -210,7 +211,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Zip Code</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -224,7 +225,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Home Phone</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -238,7 +239,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Personal Phone</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -252,7 +253,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Personal Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -266,7 +267,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>LINE ID</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -280,7 +281,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Driving License</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -294,7 +295,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Qualifications</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -308,7 +309,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               <FormItem>
                 <FormLabel>Last Education</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -326,6 +327,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                     <Input
                       value={member.nameFurigana}
                       onChange={(e) => updateFamilyMember(index, "nameFurigana", e.target.value)}
+                      disabled={disabled}
                     />
                   </FormControl>
                 </FormItem>
@@ -335,6 +337,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                     <Input
                       value={member.relationship}
                       onChange={(e) => updateFamilyMember(index, "relationship", e.target.value)}
+                      disabled={disabled}
                     />
                   </FormControl>
                 </FormItem>
@@ -344,6 +347,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                     <Input
                       value={member.occupation}
                       onChange={(e) => updateFamilyMember(index, "occupation", e.target.value)}
+                      disabled={disabled}
                     />
                   </FormControl>
                 </FormItem>
@@ -352,6 +356,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                   <Select
                     value={member.gender}
                     onValueChange={(value) => updateFamilyMember(index, "gender", value)}
+                    disabled={disabled}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -370,6 +375,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                       type="date"
                       value={member.birthDate}
                       onChange={(e) => updateFamilyMember(index, "birthDate", e.target.value)}
+                      disabled={disabled}
                     />
                   </FormControl>
                 </FormItem>
@@ -379,6 +385,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                     <Input
                       value={member.phoneNumber}
                       onChange={(e) => updateFamilyMember(index, "phoneNumber", e.target.value)}
+                      disabled={disabled}
                     />
                   </FormControl>
                 </FormItem>
@@ -387,6 +394,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
                     type="button"
                     variant="destructive"
                     onClick={() => removeFamilyMember(index)}
+                    disabled={disabled}
                   >
                     Remove
                   </Button>
@@ -398,6 +406,7 @@ export function BasicForm({ familyMembers, setFamilyMembers }: BasicFormProps) {
               variant="outline"
               onClick={addFamilyMember}
               className="mt-4"
+              disabled={disabled}
             >
               Add Family Member
             </Button>

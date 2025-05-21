@@ -12,7 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { EmployeeFormValues } from "@/components/employees/employee-form"
 
-export function WelfareForm() {
+interface WelfareFormProps {
+  disabled?: boolean
+}
+
+export function WelfareForm({ disabled = false }: WelfareFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   return (
@@ -29,7 +33,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Basic Pension Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -43,7 +47,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Welfare Pension Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -57,7 +61,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Welfare Pension Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +75,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Welfare Pension Grade</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,7 +89,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Health Insurance Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,7 +103,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Health Insurance Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +117,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Health Insurance Grade</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,7 +131,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Employment Insurance Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -141,7 +145,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Employment Insurance Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +159,7 @@ export function WelfareForm() {
               <FormItem>
                 <FormLabel>Employment Compensation History</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

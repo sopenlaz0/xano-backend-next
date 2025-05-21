@@ -15,9 +15,10 @@ import { EmployeeFormValues } from "@/components/employees/employee-form"
 
 interface AdditionalFormProps {
   onFileUpload: (file: File) => void
+  disabled?: boolean
 }
 
-export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
+export function AdditionalForm({ onFileUpload, disabled = false }: AdditionalFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +46,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
                     type="file"
                     accept=".pdf,.doc,.docx"
                     onChange={handleFileChange}
+                    disabled={disabled}
                   />
                 </FormControl>
                 <FormMessage />
@@ -58,7 +60,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Commuting Method</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select method" />
@@ -83,7 +85,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Car Commuting Details</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +99,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Public Transport Details</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -111,7 +113,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Commuting Time</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -125,7 +127,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Commuting Expenses</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,7 +141,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Maternity Leave Period</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -153,7 +155,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Parental Leave Period</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -167,7 +169,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Health Check Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -181,7 +183,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Health Check Result</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -195,7 +197,7 @@ export function AdditionalForm({ onFileUpload }: AdditionalFormProps) {
               <FormItem>
                 <FormLabel>Memo</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

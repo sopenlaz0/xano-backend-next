@@ -12,7 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { EmployeeFormValues } from "@/components/employees/employee-form"
 
-export function OutsourcedPartnerForm() {
+interface OutsourcedPartnerFormProps {
+  disabled?: boolean
+}
+
+export function OutsourcedPartnerForm({ disabled = false }: OutsourcedPartnerFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   return (
@@ -29,7 +33,7 @@ export function OutsourcedPartnerForm() {
               <FormItem>
                 <FormLabel>Company Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -43,7 +47,7 @@ export function OutsourcedPartnerForm() {
               <FormItem>
                 <FormLabel>Position</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -57,7 +61,7 @@ export function OutsourcedPartnerForm() {
               <FormItem>
                 <FormLabel>Employment Type</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

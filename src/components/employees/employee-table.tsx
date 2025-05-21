@@ -34,6 +34,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useState, useMemo, useCallback } from "react"
 import { Search, RotateCcw } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface EmployeeTableProps {
   employees: Employee[]
@@ -59,6 +60,7 @@ export function EmployeeTable({ employees, onDelete, onUpdate }: EmployeeTablePr
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumns)
   const [columnSearch, setColumnSearch] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const router = useRouter()
 
   const resetColumns = useCallback(() => {
     setColumnVisibility(defaultColumns)
@@ -499,6 +501,8 @@ export function EmployeeTable({ employees, onDelete, onUpdate }: EmployeeTablePr
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => router.push(`/employees/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell: Cell<Employee, unknown>) => (
                     <TableCell key={cell.id} className="whitespace-nowrap">

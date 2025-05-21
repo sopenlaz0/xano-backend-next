@@ -13,7 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { EmployeeFormValues } from "@/components/employees/employee-form"
 
-export function WorkForm() {
+interface WorkFormProps {
+  disabled?: boolean
+}
+
+export function WorkForm({ disabled = false }: WorkFormProps) {
   const form = useFormContext<EmployeeFormValues>()
 
   return (
@@ -30,7 +34,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Company A</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -44,7 +48,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Company B</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -58,7 +62,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Transferred Company</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -72,7 +76,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Work Location</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -86,7 +90,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Company Email</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input type="email" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +104,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Company Phone</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -114,7 +118,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Position</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,7 +132,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Team</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,7 +146,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Responsible Person Code</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -156,7 +160,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Joining Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -170,7 +174,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Resignation Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -183,7 +187,7 @@ export function WorkForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Employment Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
@@ -207,7 +211,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Job Type</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -221,7 +225,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Personal Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -235,7 +239,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Work Accident Procedure Memo</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -249,7 +253,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Salary Transfer Details</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -263,7 +267,7 @@ export function WorkForm() {
               <FormItem>
                 <FormLabel>Bonus Transfer Details</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} disabled={disabled} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
